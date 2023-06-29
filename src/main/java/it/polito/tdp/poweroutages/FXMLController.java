@@ -5,6 +5,8 @@
 package it.polito.tdp.poweroutages;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import it.polito.tdp.poweroutages.model.Model;
 import it.polito.tdp.poweroutages.model.Nerc;
@@ -15,6 +17,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class FXMLController {
+	
+	private Model model;
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -34,11 +38,30 @@ public class FXMLController {
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
 
-    private Model model;
+    
     
     @FXML
     void doRun(ActionEvent event) {
     	txtResult.clear();
+//    	if(txtHours.getText().matches("[0-9]+")) -> verifica se contiene sono numeri 
+    	
+    	
+    	try {
+    		Double ore= Double.parseDouble(txtHours.getText());
+        	Integer anni= Integer.parseInt(txtYears.getText());		
+        	
+        	if(cmbNerc.getValue()!=null) {
+        		txtResult.setText(model.worstSequenza(cmbNerc.getValue(),anni, ore));
+            	txtHours.setText("");
+            	txtYears.setText("");
+        	}
+        	else
+        		txtResult.setText("Seleziona un Nerc!");
+		} 
+    	catch (Exception e) {
+			txtResult.setText("Inserire valori validi!");
+		}
+    	
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -54,5 +77,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	List<Nerc> risultato= new ArrayList<>(model.getNercList());
+    	cmbNerc.getItems().setAll(risultato);
     }
 }
